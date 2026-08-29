@@ -8,28 +8,29 @@ let handler = async (m, { conn, command }) => {
     if (command === 'abrir') {
         isClose = 'not_announcement'
         estado = 'ABIERTO 🔓'
-        icon = '🍕'
+        icon = '🍰'
         react = '🔓'
     } 
     if (command === 'cerrar') {
         isClose = 'announcement'
         estado = 'CERRADO 🔒'
-        icon = '😼'
+        icon = '🌸'
         react = '🔒'
     }
 
     await conn.groupSettingUpdate(m.chat, isClose)
     await m.react(react)
 
-    await conn.reply(m.chat, `🐱 𓆩 𝗚𝗥𝗨𝗣𝗢 ${estado} 𓆪 🐱
+    await conn.reply(m.chat, `🍰 𓆩 𝗚𝗥𝗨𝗣𝗢 ${estado} 𓆪 🌸
 
-.⃟𖥔 ݁. 𖦹˙— \`\`ACCION REALIZADA\`\` —˙𖦹.🍕꒷
+.⃟𖥔 ݁. 𖦹˙— \`\`ACCION REALIZADA\`\` —˙𖦹.🍜꒷
 
 ${icon} *Estado:* El grupo fue ${estado.toLowerCase()}
 👑 *Por:* @${m.sender.split('@')[0]}
 
 ━━━━━━━━━━━
-*Powered by*: ***Garfield Bot Oficial*** 🍕`, m, {
+*Powered by*: ***Lovesitap Bot*** 💎
+> "Abriendo la pastelería para todos" 🍰`, m, {
         mentions: [m.sender]
     })
 }
