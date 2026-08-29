@@ -4,7 +4,7 @@ let handler = async (m, { conn, text }) => {
     let user = `@${m.sender.split('@')[0]}`
     let groupName = m.isGroup? (await conn.groupMetadata(m.chat)).subject : 'Privado'
 
-    if (!text) return m.reply(`🐱 𓆩 ***𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟*** 𓆪 🐱\n\n✨ *¿Qué quieres buscar?*\n📌 *Ejemplo:* ${m.prefix}google garfield comiendo lasaña`)
+    if (!text) return m.reply(`🍰 𓆩 ***𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧*** 𓆪 🌸\n\n✨ *¿Qué quieres buscar?*\n📌 *Ejemplo:* ${m.prefix}google lovesitap postres 🍜`)
 
     await m.react('🔍')
 
@@ -14,12 +14,12 @@ let handler = async (m, { conn, text }) => {
 
         if (!results.length) {
             await m.react('❌')
-            return m.reply('🍕 *No encontré resultados.*')
+            return m.reply('🍰 *No encontré resultados.* 🌸')
         }
 
-        let txt = `🐱 𓆩 𝗕𝗨𝗦𝗖𝗔𝗗𝗢𝗥 𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𓆪 🐱
+        let txt = `🍰 𓆩 𝗕𝗨𝗦𝗖𝗔𝗗𝗢𝗥 𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𓆪 🌸
 
-.⃟𖥔 ݁. 𖦹˙— \`\`RESULTADOS\`\` —˙𖦹.🍕꒷
+.⃟𖥔 ݁. 𖦹˙— \`\`RESULTADOS\`\` —˙𖦹.🍜꒷
 
 🔎 *Buscando:* ${text}
 
@@ -35,8 +35,8 @@ ${results.map((v, i) => {
 🏷 *Grupo:* ${groupName}
 
 ━━━━━━━━━━━━━━
-*Powered by*: ***Garfield Bot Oficial*** 🍕
-*Tip:* Usa .ytmp4 o .ytmp3 + el link`
+*Powered by*: ***Lovesitap Bot*** 💎
+*Tip:* Usa .ytmp4 o .ytmp3 + el link 🍰`
 
         await conn.reply(m.chat, txt, m, { mentions: [m.sender] })
         await m.react('✅')
@@ -44,7 +44,7 @@ ${results.map((v, i) => {
     } catch (e) {
         console.error(e)
         await m.react('❌')
-        m.reply('🍕 *Error:* No se pudo realizar la búsqueda.')
+        m.reply('🍰 *Error:* No se pudo realizar la búsqueda. 🌸')
     }
 }
 
