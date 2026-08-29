@@ -6,10 +6,10 @@ let handler = async (m, { conn, prefix, command }) => {
     let q = m.quoted ? m.quoted : m;
     let mime = (q.msg || q).mimetype || '';
 
-    if (!mime) return m.reply(`📸 Responde a una imagen con el comando *${prefix}${command}* para mejorar su calidad.`);
-    if (!mime.startsWith('image')) return m.reply(`⚠️ Solo se admiten imágenes.`);
+    if (!mime) return m.reply(`🍰 Responde a una imagen con el comando *${prefix}${command}* para mejorar su calidad. 🌸`);
+    if (!mime.startsWith('image')) return m.reply(`⚠️ Solo se admiten imágenes 🍜`);
 
-    // Reacción de procesamiento (Rayo)
+    // Reacción de procesamiento
     await conn.sendMessage(m.chat, {
       react: { text: "⚡", key: m.key }
     });
@@ -19,14 +19,19 @@ let handler = async (m, { conn, prefix, command }) => {
     // Procesamiento con IA
     const enhancedBuffer = await ihancer(media, { method: 1, size: 'high' });
 
-    const caption = `╭╾━━━━╼ 〔 ⚡ 〕 ╾━━━━╼╮
-┃  ✨ *GARFIEL BOT*
-┃
-┃ ⚙️ *Método:* iHancer AI
-┃ 🔝 *Calidad:* High Max
-┃ 🔥 *By:* Whois Developers
-╰╾━━━━╼ 〔 🚀 〕 ╾━━━━╼╯
-*Power & Speed Style*`;
+    const caption = `🍰 𓆩 𝗠𝗘𝗝𝗢𝗥𝗔 𝗖𝗢𝗡 𝗜𝗔 𓆪 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`LOVESITAP AI\`\` —˙𖦹.🍜꒷
+
+*━━━━━━━━━━*
+*✨ CALIDAD MEJORADA*
+
+*⚙️ Método:* iHancer AI
+*🔝 Calidad:* High Max
+*🤖 Bot:* Lovesitap Bot 🍰🌸🍜
+
+*━━━━━━━━━━*
+> _"Potenciado por IA para Lovesitap"_ 💎`;
 
     await conn.sendMessage(m.chat, {
       image: enhancedBuffer,
@@ -43,7 +48,7 @@ let handler = async (m, { conn, prefix, command }) => {
     await conn.sendMessage(m.chat, {
       react: { text: "❌", key: m.key }
     });
-    await m.reply("⚠️ Ocurrió un error al procesar la imagen con la IA.");
+    await m.reply("⚠️ Ocurrió un error al procesar la imagen con la IA 🍰");
   }
 };
 
@@ -59,7 +64,7 @@ async function ihancer(buffer, { method = 1, size = 'low' } = {}) {
     form.append('is_pro_version', 'false')
     form.append('is_enhancing_more', 'false')
     form.append('max_image_size', size)
-    form.append('file', buffer, `didier_${Date.now()}.jpg`) // Nombre de archivo actualizado
+    form.append('file', buffer, `lovesitap_${Date.now()}.jpg`) // Nombre actualizado
 
     const { data } = await axios.post('https://ihancer.com/api/enhance', form, {
         headers: {
