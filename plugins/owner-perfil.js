@@ -27,7 +27,9 @@ let handler = async (m, { conn, args }) => {
     let reqXp = (level + 1) * 100
     let xpProgress = exp - (level * 100)
 
-    const caption = `╭─「 PERFIL DE USUARIO 」
+    const caption = `🍰 𓆩 𝗣𝗘𝗥𝗙𝗜𝗟 𝗗𝗘 𝗨𝗦𝗨𝗔𝗥𝗜𝗢 𓆪 🌸
+.⃟𖥔 ݁. 𖦹˙— \`\`LOVESITAP PROFILE\`\` —˙𖦹.🍜꒷
+
 │
 │ 👤 *NOMBRE:* ${name}
 │ 📱 *NUMERO:* @${number}
@@ -40,7 +42,8 @@ let handler = async (m, { conn, args }) => {
 │
 │ ✅ *REGISTRO:* ${registered? 'Si' : 'No'}
 │
-╰───────────────────────`
+╰───────────────────────
+> _"Perfil potenciado por Lovesitap Bot"_ 💎`
 
     // Obtener foto de perfil
     let pp
@@ -61,7 +64,7 @@ let handler = async (m, { conn, args }) => {
   } catch (e) {
     console.error(e)
     await react(conn, m, "❌")
-    await m.reply(`❌ Ocurrió un error al obtener el perfil.`)
+    await m.reply(`🍰 ❌ Ocurrió un error al obtener el perfil 🌸`)
   }
 }
 
