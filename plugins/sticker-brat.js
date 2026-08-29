@@ -8,13 +8,15 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   let q = m.quoted ? m.quoted : m
   let txt = text || q.text || q.caption || q.body || ''
 
-  if (!txt) return m.reply(`🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟 - 𝗕𝗥𝗔𝗧* 🐱
+  if (!txt) return m.reply(`🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 - 𝗕𝗥𝗔𝗧* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ERROR DE USO\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
-*⚠️ ERROR DE USO*
+*⚠️ FALTA TEXTO*
 
 *➤* Escribe el texto para generar el *sticker Brat*
-*➤* Ejemplo: *${usedPrefix + command} Hola Garfield*
+*➤* Ejemplo: *${usedPrefix + command} Hola Lovesitap*
 
 *━━━━━━━━━━*`)
 
@@ -26,7 +28,9 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   let response = await fetch(apiUrl)
   if (!response.ok) {
     await m.react('❌')
-    return m.reply(`🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟* 🐱
+    return m.reply(`🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ERROR\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
 *❌ ERROR*
@@ -39,8 +43,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   let inputBuffer = await response.buffer()
   let ext = isAnimated ? 'mp4' : 'png'
-  let tmpInput = path.join(tmpdir(), `garfield-${Date.now()}.${ext}`)
-  let tmpOutput = path.join(tmpdir(), `garfield-${Date.now()}.webp`)
+  let tmpInput = path.join(tmpdir(), `lovesitap-${Date.now()}.${ext}`)
+  let tmpOutput = path.join(tmpdir(), `lovesitap-${Date.now()}.webp`)
 
   fs.writeFileSync(tmpInput, inputBuffer)
 
@@ -49,11 +53,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     if (isAnimated) {
       process
         .fps(15)
-        .videoFilters('scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=0x00000000')
+        .videoFilters('scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=0x00000')
         .outputOptions(['-loop 0', '-preset default', '-an', '-vsync 0'])
     } else {
       process
-        .videoFilters('scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=0x00000000')
+        .videoFilters('scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=0x00000')
     }
 
     process
@@ -67,8 +71,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   await conn.sendMessage(m.chat, {
     sticker: stickerBuffer,
-    packname: '***Garfield Bot Oficial***',
-    author: ''
+    packname: 'Lovesitap Bot',
+    author: '🍰🌸🍜'
   }, { quoted: m })
 
   if (fs.existsSync(tmpInput)) fs.unlinkSync(tmpInput)
