@@ -53,10 +53,10 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
     // Ordenar las banderas según el orden definido
     const orderedFlags = countryFlags.map(c => c.bandera).concat(['🚩'])
 
-    // Texto con diseño GARFIELD BOT OFICIAL
-    let messageText = `🐱 𓆩 𝗜𝗡𝗩𝗢𝗖𝗔𝗖𝗜𝗢𝗡 𝗚𝗘𝗡𝗘𝗥𝗔𝗟 𓆪 🐱
+    // Texto con diseño LOVESITAP BOT
+    let messageText = `🍰 𓆩 𝗜𝗡𝗩𝗢𝗖𝗔𝗖𝗜𝗢𝗡 𝗚𝗘𝗡𝗘𝗥𝗔𝗟 𓆪 🌸
 
-.⃟𖥔 ݁. 𖦹˙— \`\` ${groupName} \`\` —˙𖦹.🍕꒷
+.⃟𖥔 ݁. 𖦹˙— \`\` ${groupName} \`\` —˙𖦹.🍜꒷
 
 ──🍃 *𝗜𝗡𝗙𝗢* ╏ 💚
 💚 ➛ *Integrantes:* ${participants.length}
@@ -77,13 +77,12 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
 
     messageText += `
 ━━━━━━━━━━━
-*Powered by*: ***Garfield Bot Oficial*** 🍕
-*Owner*: @whois.yallico`
+*Powered by*: ***Lovesitap Bot*** 💎
+> "Invocando a todos para compartir postres" 🍰`
 
-    // IMAGENES ROTATORIAS
+    // IMAGENES ROTATORIAS + tu imagen nueva
     const images = [
-      'https://files.evogb.win/QFXQtu.jpg',
-      'https://files.evogb.win/E2yVdA.jpg'
+      'https://files.evogb.win/rJ2MBG.jpg'
     ]
     const imageUrl = { url: images[Math.floor(Math.random() * images.length)] }
 
@@ -98,7 +97,7 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
   } catch (error) {
     console.error("[ERROR EN TODOS]:", error)
     await m.react('❌')
-    conn.reply(m.chat, `❌ Ocurrió un error al ejecutar el comando.`, m)
+    conn.reply(m.chat, `🍰 ❌ Ocurrió un error al ejecutar el comando 🌸`, m)
   }
 }
 
