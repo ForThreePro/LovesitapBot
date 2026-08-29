@@ -1,12 +1,13 @@
 import { exec } from "child_process"
 
 let handler = async (m, { conn, command }) => {
-    const owner = "@whois.yallico"
 
     // 1. RESET
     if (command === 'reset') {
         await m.react('🔄')
-        await m.reply(`🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟 - 𝗥𝗘𝗦𝗘𝗧* 🐱
+        await m.reply(`🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 - 𝗥𝗘𝗦𝗘𝗧* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`REINICIANDO\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
 *🔄 REINICIANDO SISTEMA*
@@ -22,17 +23,21 @@ let handler = async (m, { conn, command }) => {
         try {
             await m.react('👑')
             await conn.groupParticipantsUpdate(m.chat, [conn.user.jid], 'promote')
-            await m.reply(`🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟 - 𝗔𝗗𝗠𝗜𝗡* 🐱
+            await m.reply(`🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 - 𝗔𝗗𝗠𝗜𝗡* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`PODERES ASIGNADOS\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
 *✅ ADMINISTRADOR ASIGNADO*
 
-*➤* Ya tengo poderes de *admin* en este grupo
+*➤* Ya tengo poderes de *admin* en este grupo 🍜
 
 *━━━━━━━━━━*`)
         } catch (e) {
             await m.react('❌')
-            m.reply(`🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟* 🐱
+            m.reply(`🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ERROR\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
 *❌ ERROR*
@@ -48,7 +53,9 @@ let handler = async (m, { conn, command }) => {
     if (command === 'update' || command === 'actualizar' || command === 'fix') {
         if (m.react) await m.react('🌀')
 
-        await conn.reply(m.chat, `🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟 - 𝗨𝗣𝗗𝗔𝗧𝗘* 🐱
+        await conn.reply(m.chat, `🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 - 𝗨𝗣𝗗𝗔𝗧𝗘* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ACTUALIZANDO\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
 *🌀 ACTUALIZANDO MODULOS*
@@ -60,7 +67,9 @@ let handler = async (m, { conn, command }) => {
         exec('git pull', async (err, stdout, stderr) => {
             if (err) {
                 if (m.react) await m.react('❌')
-                return conn.reply(m.chat, `🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟* 🐱
+                return conn.reply(m.chat, `🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ERROR\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
 *❌ ERROR EN LA ACTUALIZACION*
@@ -68,25 +77,27 @@ let handler = async (m, { conn, command }) => {
 *➤* Detalle: 
 \`\`${err.message}\`\`
 
-*━━━━━━━━━━*
-*Owner:* ${owner}`, m)
+*━━━━━━━━━━*`, m)
             }
 
             if (stdout.includes('Already up to date.')) {
                 if (m.react) await m.react('✅')
-                return conn.reply(m.chat, `🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟* 🐱
+                return conn.reply(m.chat, `🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ACTUALIZADO\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
 *✅ SISTEMA ACTUALIZADO*
 
 *➤* El sistema ya está en su *versión más reciente*
 
-*━━━━━━━━━━*
-*Owner:* ${owner}`, m)
+*━━━━━━━━━━*`, m)
             }
 
             if (m.react) await m.react('✅')
-            return conn.reply(m.chat, `🐱 *𝗚𝗔𝗥𝗙𝗜𝗘𝗟𝗗 𝗕𝗢𝗧 𝗢𝗙𝗜𝗖𝗜𝗔𝗟* 🐱
+            return conn.reply(m.chat, `🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧* 🌸
+
+.⃟𖥔 ݁. 𖦹˙— \`\`CAMBIOS APLICADOS\`\` —˙𖦹.🍜꒷
 
 *━━━━━━━━━━*
 *✅ ACTUALIZACION APLICADA*
@@ -94,8 +105,7 @@ let handler = async (m, { conn, command }) => {
 *📋 Cambios:*
 \`\`${stdout}\`\`
 
-*━━━━━━━━━━*
-*Owner:* ${owner}`, m)
+*━━━━━━━━━━*`, m)
         })
     }
 }
