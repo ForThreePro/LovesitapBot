@@ -29,9 +29,7 @@ let handler = async (m, { conn, command, text, usedPrefix }) => {
 
         // Rota las fotos + tu imagen nueva
         const images = [
-            'https://files.evogb.win/rJ2MBG.jpg',
-            'https://files.evogb.win/QFXQtu.jpg',
-            'https://files.evogb.win/E2yVdA.jpg'
+            'https://files.evogb.win/rJ2MBG.jpg'
         ]
         let img = { url: images[Math.floor(Math.random() * images.length)] }
 
