@@ -1,145 +1,101 @@
+import fetch from "node-fetch"
+import yts from 'yt-search'
+import { FormData, Blob } from 'formdata-node'
+import { fileTypeFromBuffer } from 'file-type'
+import { spawn } from 'child_process'
+import crypto from 'crypto'
+import fs from 'fs'
+import os from 'os'
+import path from 'path'
 
-import axios from 'axios';
-import FormData from 'form-data';
+const SONGFINDER_API = 'https://songfinder.gg/api/recognize/url'
+const UGUU_UPLOAD = 'https://uguu.se/upload'
+const CLIP_SECONDS = 30
 
-const REMOVE_BG_KEY = '3SqybUm2S1uEb9yGzErTrdfP'
+const handler = async (m, { conn, command }) => {
+    try {
+        let q = m.quoted? m.quoted : m
+        let mime = (q.msg || q).mimetype || ''
+        if (!mime || !/audio|video/.test(mime)) return m.reply(`💌 𓆩♡𓆪 💌
+😚❤️ 𓆩 𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 𓆪 😚❤️
 
-// FUNCION PARA REACCIONES COMPATIBLE
-const react = async (conn, m, text) => {
-  try { await conn.sendMessage(m.chat, { react: { text: text, key: m.key } }) } catch {}
-}
+.⃟𖥔 ݁. 𖦹˙— \`\`𝐋𝐨𝐯𝐞 𝐌𝐮𝐬𝐢𝐜\`\` —˙𖦹.💭꒷
 
-let handler = async (m, { conn, prefix, command }) => {
-  try {
-    let q = m.quoted? m.quoted : m;
-    let mime = (q.msg || q).mimetype || '';
+ ⤷ ┇ 𝗕𝗨𝗦𝗖𝗔𝗗𝗢𝗥 𝗗𝗘 𝗠𝗨𝗦𝗜𝗖𝗔
+💭 ➛ .song = Info + Audio
+💭 ➛ .letra = Letra + Audio
 
-    if (!mime) return m.reply(`🍰 📸 Responde a una imagen con el comando *${prefix}${command}* 🌸`);
-    if (!mime.startsWith('image')) return m.reply(`🍰 ⚠️ Solo se admiten imágenes. 🌸`);
+💌 𓆩♡𓆪 💌
+> "La música cura el alma" 🎵`)
 
-    await react(conn, m, "⚡");
-    await m.reply('🍰 ⏳ Procesando imagen HD + Quitar fondo... 🌸')
+        await m.react('🔍')
+        let buffer = await q.download()
+        if (!buffer) throw 'Error al descargar'
 
-    const media = await q.download();
+        await m.reply(`💌 𓆩♡𓆪 💌
+😚❤️ 𓆩 𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 𓆪 😚❤️
+ ⤷ ┇ 💖 BUSCANDO CON AMOR
+💭 ➛ Analizando ${CLIP_SECONDS}s...
+💌 𓆩♡𓆪 💌`)
 
-    // PASO 1: HD
-    const enhancedBuffer = await ihancer(media, { method: 1, size: 'high' });
+        let clip = await prepareClip(buffer, CLIP_SECONDS)
+        let url = await uploadUguu(clip)
+        let song = await recognizeUrl(url)
+        let searchQuery = `${song.title} ${song.artist}`.replace(/\[.*?\]|\(feat.*?\)/gi, '').trim()
 
-    // PASO 2: REMOVE BG
-    const formData = new FormData()
-    formData.append('image_file', enhancedBuffer, { filename: 'hd.png', contentType: 'image/png' })
-    formData.append('size', 'auto')
+        await m.react('📥')
+        let search = await yts(searchQuery)
+        let result = search.videos[0]
+        if (!result) throw 'No se encontró la canción'
 
-    const response = await fetch('https://api.remove.bg/v1.0/removebg', {
-      method: 'POST',
-      headers: { 'X-Api-Key': REMOVE_BG_KEY,...formData.getHeaders() },
-      body: formData
-    })
+        const { title, thumbnail, timestamp, views, videoId, author } = result
+        const shortUrl = `https://youtu.be/${videoId}`
+        const thumb = (await conn.getFile(thumbnail)).data
+        const vistas = formatViews(views)
+        const mediaUrl = await getMediaUrl(shortUrl)
+        if (!mediaUrl) throw 'No se pudo obtener el audio'
 
-    if (!response.ok) throw new Error(`Error remove.bg: ${response.statusText}`)
-    const resultBuffer = Buffer.from(await response.arrayBuffer())
-
-    const caption = `╭─「 𝗣𝗥𝗢𝗖𝗘𝗦𝗔𝗗𝗢 𝗖𝗢𝗡 𝗜𝗔 」
-│
-│ ⚙️ 𝗣𝗥𝗢𝗖𝗘𝗦𝗢: HD + Quitar Fondo
-│ 🔝 𝗖𝗔𝗟𝗜𝗗𝗔𝗗: Alta
-│ 📦 𝗙𝗢𝗥𝗠𝗔𝗧𝗢: PNG Sin Fondo
-│
-╰───────────────────────
-🍰 "Listo como postre sin migajas" 💎`
-
-    // 1. ENVIAR IMAGEN NORMAL PRIMERO
-    await conn.sendMessage(m.chat, {
-      image: resultBuffer,
-      caption: caption
-    }, { quoted: m });
-
-    // 2. PREGUNTAR SI QUIERE DOCUMENTO
-    await conn.sendMessage(m.chat, {
-      text: `🍰 ¿Deseas recibir esta imagen como DOCUMENTO sin compresión? 🌸`,
-      footer: 'Responde: si o no | Lovesitap Bot',
-      buttons: [
-        {
-          buttonId: `.docsi_${m.sender}`,
-          buttonText: { displayText: '✅ SI, ENVIAR DOCUMENTO' },
-          type: 1
-        },
-        {
-          buttonId: `.docno_${m.sender}`,
-          buttonText: { displayText: '❌ NO' },
-          type: 1
+        if(command === 'song'){
+            await conn.sendMessage(m.chat, {
+                image: thumb,
+                caption: `💌 𓆩♡𓆪 💌
+😚❤️ 𓆩 𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 𓆪 😚❤️
+ ⤷ ┇ 💘 CANCIÓN ENCONTRADA
+📌 ➛ ${title}
+👤 ➛ ${author.name}
+👁️ ➛ ${vistas} | ⏱️ ${timestamp}
+🔗 ➛ ${shortUrl}
+💌 𓆩♡𓆪 💌
+> "La música cura el alma" 🎵`
+            }, { quoted: m })
+            await conn.sendMessage(m.chat, { audio: { url: mediaUrl }, fileName: `${title}.mp3`, mimetype: 'audio/mpeg' }, { quoted: m })
         }
-      ],
-      headerType: 1
-    }, { quoted: m });
 
-    // GUARDAR TEMPORAL
-    global.resultadosHD = global.resultadosHD || {}
-    global.resultadosHD[m.sender] = resultBuffer
-
-    await react(conn, m, "✅");
-
-  } catch (e) {
-    console.error(e);
-    await react(conn, m, "❌");
-    await m.reply(`🍰 ❌ Ocurrió un error: ${e.message} 🌸`);
-  }
-};
-
-// HANDLER PARA BOTONES
-handler.before = async (m, { conn }) => {
-  if (!m.message?.buttonsResponseMessage) return
-  const buttonId = m.message.buttonsResponseMessage.selectedButtonId
-
-  if (buttonId?.startsWith('.docsi_')) {
-    const sender = buttonId.split('_')[1]
-    const buffer = global.resultadosHD?.[sender]
-    if (!buffer) return m.reply('🍰 ❌ El proceso expiró. Vuelve a usar el comando. 🌸')
-
-    await conn.sendMessage(m.chat, {
-      document: buffer,
-      mimetype: 'image/png',
-      fileName: `Lovesitap_HD_NoBG_${Date.now()}.png`,
-      caption: '🍰 ✅ DOCUMENTO ENVIADO SIN COMPRESIÓN 🌸'
-    }, { quoted: m })
-
-    delete global.resultadosHD[sender]
-  }
-
-  if (buttonId?.startsWith('.docno_')) {
-    delete global.resultadosHD[m.sender]
-    await m.reply('🍰 👍 Entendido. 🌸')
-  }
+        if(command === 'letra'){
+            await m.react('📝')
+            const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(song.artist)}/${encodeURIComponent(song.title)}`).then(r => r.json())
+            let lyrics = lyricsRes.lyrics || 'No encontré la letra'
+            if(lyrics.length > 1500) lyrics = lyrics.slice(0, 1500) + '\n\n...'
+            await conn.sendMessage(m.chat, { text: `💌 𓆩♡𓆪 💌
+😚❤️ 𓆩 𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 - LETRA 𓆪 😚❤️
+📌 *${title}* - *${author.name}*
+\`\`${lyrics}\`\`\`
+💌 𓆩♡𓆪 💌` }, { quoted: m })
+            await conn.sendMessage(m.chat, { audio: { url: mediaUrl }, fileName: `${title}.mp3`, mimetype: 'audio/mpeg' }, { quoted: m })
+        }
+        await m.react('✅')
+    } catch(e) {
+        await m.react('❌')
+        m.reply(`💌 𓆩♡𓆪 💌
+😚❤️ 💔 AY NO
+⚠️ ➛ ${e.message}
+💌 𓆩♡𓆪 💌`)
+    }
 }
 
-async function ihancer(buffer, { method = 1, size = 'low' } = {}) {
-    const _size = ['low', 'medium', 'high']
-    if (!buffer ||!Buffer.isBuffer(buffer)) throw new Error('Se requiere una imagen')
-    if (method < 1 || method > 4) throw new Error('Métodos disponibles: 1, 2, 3, 4')
-    if (!_size.includes(size)) throw new Error(`Calidades disponibles: ${_size.join(', ')}`)
-
-    const form = new FormData()
-    form.append('method', method.toString())
-    form.append('is_pro_version', 'false')
-    form.append('is_enhancing_more', 'false')
-    form.append('max_image_size', size)
-    form.append('file', buffer, `file_${Date.now()}.jpg`)
-
-    const { data } = await axios.post('https://ihancer.com/api/enhance', form, {
-        headers: {
-        ...form.getHeaders(),
-            'accept-encoding': 'gzip',
-            'host': 'ihancer.com',
-            'user-agent': 'Dart/3.5 (dart:io)'
-        },
-        responseType: 'arraybuffer'
-    })
-    return Buffer.from(data)
-}
-
-handler.help = ['removebg', 'rbg'];
-handler.tags = ['tools'];
-handler.command = ['removebg', 'rbg'];
-handler.limit = true;
-
-export default handler;
+async function recognizeUrl(audioUrl) { const res = await fetch(SONGFINDER_API, { method: 'POST', headers: {'content-type': 'application/json', 'origin': 'https://songfinder.gg'}, body: JSON.stringify({ url: audioUrl, startTime: 0, recaptchaToken: crypto.randomBytes(24).toString('base64url') }) }); const json = await res.json(); if (!json?.success ||!json?.track) throw new Error('No se encontró'); return json.track }
+async function uploadUguu(buffer) { const { ext, mime } = (await fileTypeFromBuffer(buffer)) || { ext: 'mp3', mime: 'audio/mpeg' }; const blob = new Blob([buffer], { type: mime }); const form = new FormData(); form.append('files[]', blob, crypto.randomBytes(5).toString('hex') + '.' + ext); const res = await fetch(UGUU_UPLOAD, { method: 'POST', body: form }); return (await res.json())?.files?.[0]?.url }
+function prepareClip(buffer, seconds = CLIP_SECONDS) { return new Promise(resolve => { const tmpIn = path.join(os.tmpdir(), `sf_${Date.now()}`); fs.writeFileSync(tmpIn, buffer); const ff = spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-i', tmpIn, '-t', String(seconds), '-vn', '-acodec', 'libmp3lame', '-ar', '44100', '-ac', '2', '-b:a', '128k', '-f', 'mp3', 'pipe:1']); const chunks = []; ff.stdout.on('data', c => chunks.push(c)); ff.on('close', () => { try{fs.unlinkSync(tmpIn)}catch{}; resolve(chunks.length? Buffer.concat(chunks) : buffer) }) }
+async function getMediaUrl(url) { try { const res = await fetch(`https://api.sventy.store/api/ytdl?url=${encodeURIComponent(url)}`).then(r => r.json()); return res.data?.download || null } catch { return null } }
+function formatViews(views) { if (views === undefined) return "No disponible"; if (views >= 1_000_000_000) return `${(views / 1_000_000_000).toFixed(1)}B`; if (views >= 1_000_000) return `${(views / 1_000_000).toFixed(1)}M`; if (views >= 1_000) return `${(views / 1_000).toFixed(1)}k`; return views.toString() }
+handler.help = ['song', 'letra']; handler.tags = ['buscador']; handler.command = ['song', 'letra']; export default handler
