@@ -27,7 +27,7 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
       { prefijo: '91', bandera: '🇮🇳' }, { prefijo: '61', bandera: '🇦🇺' },
       { prefijo: '64', bandera: '🇳🇿' }, { prefijo: '1', bandera: '🇺🇸' },
       { prefijo: '7', bandera: '🇷🇺' }, { prefijo: '63', bandera: '🇵🇭' },
-      { prefijo: '95', bandera: '🇲🇲' }
+      { prefijo: '95', bandera: '🇲' }
     ]
 
     const getCountryFlag = (mem) => {
@@ -80,11 +80,8 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
 *Powered by*: ***Lovesitap Bot*** 💎
 > "Invocando a todos para compartir postres" 🍰`
 
-    // IMAGENES ROTATORIAS + tu imagen nueva
-    const images = [
-      'https://files.evogb.win/rJ2MBG.jpg'
-    ]
-    const imageUrl = { url: images[Math.floor(Math.random() * images.length)] }
+    // IMAGEN GLOBAL
+    const imageUrl = { url: global.botimg }
 
     await conn.sendMessage(m.chat, {
       image: imageUrl,
