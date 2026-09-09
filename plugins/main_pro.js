@@ -27,11 +27,8 @@ let handler = async (m, { conn, command, text, usedPrefix }) => {
 ━━━━━━━━━━━
 > *"Lovesitap está disponible para los postres"* 🍰`
 
-        // Rota las fotos + tu imagen nueva
-        const images = [
-            'https://files.evogb.win/rJ2MBG.jpg'
-        ]
-        let img = { url: images[Math.floor(Math.random() * images.length)] }
+        // IMAGEN GLOBAL
+        let img = { url: global.botimg }
 
         await m.react('✅')
         return conn.sendMessage(m.chat, {
@@ -63,12 +60,8 @@ let handler = async (m, { conn, command, text, usedPrefix }) => {
 ━━━━━━━━━━━
 > *"Respondo más rápido que abrir una caja de dulces"* 🍰`
 
-        const images = [
-            'https://files.evogb.win/rJ2MBG.jpg',
-            'https://files.evogb.win/QFXQtu.jpg',
-            'https://files.evogb.win/E2yVdA.jpg'
-        ]
-        let img = { url: images[Math.floor(Math.random() * images.length)] }
+        // IMAGEN GLOBAL
+        let img = { url: global.botimg }
 
         await m.react('✅')
         return conn.sendMessage(m.chat, {
@@ -234,16 +227,16 @@ let handler = async (m, { conn, command, text, usedPrefix }) => {
 
         await new Promise((resolve, reject) => {
             ffmpeg(url)
-          .audioCodec('libopus')
-          .toFormat('opus')
-          .outputOptions([
+         .audioCodec('libopus')
+         .toFormat('opus')
+         .outputOptions([
                     '-avoid_negative_ts make_zero',
                     '-ac 1',
                     '-b:a 64k'
                 ])
-          .on('end', () => resolve(true))
-          .on('error', (err) => reject(err))
-          .save(tmpFilePath)
+         .on('end', () => resolve(true))
+         .on('error', (err) => reject(err))
+         .save(tmpFilePath)
         })
 
         let audioBuffer = fs.readFileSync(tmpFilePath)
