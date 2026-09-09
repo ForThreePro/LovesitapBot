@@ -80,8 +80,8 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
 *Powered by*: ***Lovesitap Bot*** 💎
 > "Invocando a todos para compartir postres" 🍰`
 
-    // IMAGEN GLOBAL
-    const imageUrl = { url: global.botimg }
+    // IMAGEN FIJA - Solo cambié la URL
+    const imageUrl = { url: 'https://files.evogb.win/1FbQzR.jpg' }
 
     await conn.sendMessage(m.chat, {
       image: imageUrl,
