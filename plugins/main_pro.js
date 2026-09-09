@@ -28,7 +28,7 @@ let handler = async (m, { conn, command, text, usedPrefix }) => {
 > *"Lovesitap está disponible para los postres"* 🍰`
 
         // IMAGEN FIJA - Solo cambié la URL
-        let img = { url: 'https://files.evogb.win/1FbQzR.jpg' }
+        let img = { url: 'https://files.evogb.win/pyhshs.jpg' }
 
         await m.react('✅')
         return conn.sendMessage(m.chat, {
@@ -61,7 +61,7 @@ let handler = async (m, { conn, command, text, usedPrefix }) => {
 > *"Respondo más rápido que abrir una caja de dulces"* 🍰`
 
         // IMAGEN FIJA - Solo cambié la URL
-        let img = { url: 'https://files.evogb.win/1FbQzR.jpg' }
+        let img = { url: 'https://files.evogb.win/pyhshs.jpg' }
 
         await m.react('✅')
         return conn.sendMessage(m.chat, {
