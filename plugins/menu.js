@@ -7,7 +7,7 @@ let handler = async (m, { conn, usedPrefix }) => {
   let taguser = m.mentionedJid && m.mentionedJid[0]? m.mentionedJid[0] : m.quoted? m.quoted.sender : m.sender
 
   // IMAGEN FIJA LOVESITAP
-  let img = { url: 'https://files.evogb.win/1FbQzR.jpg' }
+  let img = { url: 'https://files.evogb.win/pyhshs.jpg' }
 
   let uptime = process.uptime() * 1000
   let _uptime = clockString(uptime)
