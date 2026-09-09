@@ -6,11 +6,8 @@ let handler = async (m, { conn, usedPrefix }) => {
 
   let taguser = m.mentionedJid && m.mentionedJid[0]? m.mentionedJid[0] : m.quoted? m.quoted.sender : m.sender
 
-  // Rota las 2 fotos
-  const images = [
-    'https://files.evogb.win/rJ2MBG.jpg'
-  ]
-  let img = { url: images[Math.floor(Math.random() * images.length)] }
+  // IMAGEN GLOBAL LOVESITAP
+  let img = { url: global.botimg }
 
   let uptime = process.uptime() * 1000
   let _uptime = clockString(uptime)
