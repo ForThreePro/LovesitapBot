@@ -8,7 +8,7 @@ import axios from 'axios'
 
 global.owner = [
   [ '51927174369', 'Barboza OFC 🌃', true ],
-  [ '584249721024', 'Jota 🐼', true ]
+  [ '51924636698', 'Jota 🐼', true ]
 ]
 
 global.mods = []
@@ -22,13 +22,10 @@ global.wm = '𝙉𝙤𝙭 🌃'
 global.botname = '[ 𝙉𝙤𝙭 𝘽ο𝙩 𝙈𝘿 🌃 ]'
 global.textbot = `𝙋ο𝙬𝙚𝙧𝙚𝙙 𝙗𝙮 𝙉𝙤𝙭 🌀`
 global.dev = '• 𝙋ο𝙬𝙚𝙧𝙚𝙙 𝙗𝙮 𝘾ο𝙢𝙢𝙪𝙣𝙞𝙩𝙮 𝙉𝙤𝙭 𝘽ο𝙩 𝙈𝘿 🌃'
-global.wait = '🌪️ *𝘼𝙜𝙪𝙖𝙧𝙙𝙚 𝙪𝙣 𝙢ο𝙢𝙚𝙣𝙩ο, 𝙨ο𝙮 𝙡𝙚𝙣𝙩ο... ฅ^•ﻌ•^ฅ\n> 𝙉𝙤𝙭 𝘽ο𝙩 𝙈𝘿 🌃 🌪️*'
+global.wait = '🌪️ *𝘼𝙜𝙪𝙖𝙧𝙙𝙚 𝙪𝙣 𝙢ο𝙢𝙚𝙣𝙩ο, 𝙨ο𝙮 𝙡𝙚𝙣𝙩ο... ฅ^•ﻌ•^ฅ\n\n> 𝙉𝙤𝙭 𝘽ο𝙩 𝙈𝘿 🌃 🌪️*'
 global.listo = '*𝘼𝙦𝙪𝙞 𝙩𝙞𝙚𝙣𝙚 ฅ^•ﻌ•^ฅ*'
 global.namechannel = '𝙉𝙤𝙭 𝘽ο𝙩 𝙈𝘿 🌃'
 global.channel = 'https://whatsapp.com/channel/0029Vaua0ZD3gvWjQaIpSy18'
-
-// IMAGEN GLOBAL PARA TODOS LOS BOTS
-global.botimg = 'https://files.evogb.win/rJ2MBG.jpg' // Cambia esta con .setimg
 
 global.catalogo = fs.readFileSync('./storage/img/catalogo.png')
 
@@ -44,7 +41,7 @@ global.estilo = {
   }, 
   message: { 
     orderMessage: { 
-      itemCount: -999, 
+      itemCount: -999999, 
       status: 1, 
       surface: 1, 
       message: global.packname, 
