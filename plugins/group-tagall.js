@@ -81,7 +81,7 @@ const handler = async (m, { isOwner, isAdmin, conn, participants, args }) => {
 > "Invocando a todos para compartir postres" 🍰`
 
     // IMAGEN FIJA - Solo cambié la URL
-    const imageUrl = { url: 'https://files.evogb.win/1FbQzR.jpg' }
+    const imageUrl = { url: 'https://files.evogb.win/pyhshs.jpg' }
 
     await conn.sendMessage(m.chat, {
       image: imageUrl,
