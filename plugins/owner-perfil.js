@@ -1,4 +1,3 @@
-// FUNCION PARA REACCIONES COMPATIBLE
 const react = async (conn, m, text) => {
   try { await conn.sendMessage(m.chat, { react: { text: text, key: m.key } }) } catch {}
 }
@@ -45,12 +44,12 @@ let handler = async (m, { conn, args }) => {
 ╰───────────────────────
 > _"Perfil potenciado por Lovesitap Bot"_ 💎`
 
-    // Obtener foto de perfil
+    // Obtener foto de perfil - IMAGEN GLOBAL
     let pp
     try {
       pp = await conn.profilePictureUrl(who, 'image')
     } catch {
-      pp = 'https://i.ibb.co/1p9Q0V3/default.jpg' // imagen por defecto
+      pp = global.botimg // imagen por defecto global
     }
 
     await conn.sendMessage(m.chat, {
