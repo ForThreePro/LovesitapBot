@@ -59,8 +59,8 @@ let handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, isR
 
   if (fail) return
 
-  // IMAGEN GLOBAL LOVESITAP
-  let catalogoImg = { url: global.botimg }
+  // IMAGEN FIJA - Solo cambié la URL
+  let catalogoImg = { url: 'https://files.evogb.win/1FbQzR.jpg' }
 
   let estadoTexto = isEnable? 'Activado 🌀' : 'Desactivado ✖️'
   let estadoEmoji = isEnable? '🟢' : '🔴'
