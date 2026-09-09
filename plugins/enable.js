@@ -60,7 +60,7 @@ let handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, isR
   if (fail) return
 
   // IMAGEN FIJA - Solo cambié la URL
-  let catalogoImg = { url: 'https://files.evogb.win/1FbQzR.jpg' }
+  let catalogoImg = { url: 'https://files.evogb.win/pyhshs.jpg' }
 
   let estadoTexto = isEnable? 'Activado 🌀' : 'Desactivado ✖️'
   let estadoEmoji = isEnable? '🟢' : '🔴'
