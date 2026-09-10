@@ -1,63 +1,165 @@
-import fs from 'fs'
-import crypto from "crypto"
-import { FormData, Blob } from "formdata-node"
-import { fileTypeFromBuffer } from "file-type"
+import ytsearch from "yt-search"
+import fetch from "node-fetch"
 
-let handler = async (m, { conn, args, isOwner, isROwner }) => {
-if (!isOwner &&!isROwner) return m.reply(`*Solo Owner*`)
+const api = { url: 'https://api.stellarwa.xyz', key: 'proyectsV2' }
 
-let link = args[0]
-let q = m.quoted? m.quoted : m
-let mime = (q.msg || q).mimetype || ''
+// FUNCION PARA REACCIONES
+const react = async (conn, m, text) => {
+  try { await conn.sendMessage(m.chat, { react: { text: text, key: m.key } }) } catch {}
+}
 
-try {
-    // CASO 1: RESPONDIÓ A UNA IMAGEN
-    if (!link && mime.startsWith('image/')) {
-        await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } })
-        let media = await q.download()
-        let upload = await myCloud(media)
-        if (!upload.url) throw new Error('No se pudo subir')
-        link = upload.url
+const getBuffer = async (url) => {
+    try {
+        const res = await fetch(url)
+        return Buffer.from(await res.arrayBuffer())
+    } catch(e) {
+        throw new Error('Error descargando el archivo')
+    }
+}
+
+let handler = async (m, { conn, text, command }) => {
+    if (!text) {
+        let menuUso = `𐔌 ꒱ ***.${command}*** 𐔌 ꒱ 🎵
+
+.⃟𖥔 ݁. 𖦹˙— \`\`DESCARGAS\`\` —˙𖦹.📥꒷
+
+── *📝 DESCRIPCIÓN* ╏
+🎵 ➛ Descarga audio de YouTube y TikTok
+🎵 ➛ Envía el audio en MP3
+
+── *📖 USO* ╏
+1️⃣ ➛.*play1* <nombre de canción>
+2️⃣ ➛.*ttmp3* <link de tiktok>
+
+── *💡 EJEMPLOS* ╏
+➛.*play1* blinding lights
+➛.*ttmp3* https://www.tiktok.com/@user/video/123
+
+━━━━━━━━━━━`
+        return conn.sendMessage(m.chat, { text: menuUso }, { quoted: m })
     }
 
-    // CASO 2: PEGO LINK DIRECTO
-    if (!link) return m.reply(`*USO INCORRECTO*\n\n*Opción 1:*.setimg https://i.imgur.com/tu-foto.jpg\n*Opción 2:* Responde a una imagen con.setimg`)
-    if (!link.startsWith('http')) return m.reply(`*El link debe ser un URL valido*`)
+    await react(conn, m, '⏳')
+    try {
+        // ===== YOUTUBE =====
+        if (command === 'play1') {
+            await m.reply(`𐔌 ꒱ ***.play1*** 𐔌 ꒱ ⏳
 
-    // Actualizar variable global
-    global.botimg = link
+.⃟𖥔 ݁. 𖦹˙— \`\`BUSCANDO\`\` —˙𖦹.🔍꒷
 
-    // Guardar en config.json para que no se pierda al reiniciar
-    let config = {}
-    if (fs.existsSync('./config.json')) {
-        config = JSON.parse(fs.readFileSync('./config.json'))
+── *📊 ESTADO* ╏
+🔍 ➛ Buscando en YouTube...
+📥 ➛ Obteniendo audio...
+⬇️ ➛ Preparando descarga...
+
+━━━━━━━━━━━`)
+
+            const searchResult = await ytsearch(text)
+            if (!searchResult.videos ||!searchResult.videos.length) throw new Error("No se encontró la canción.")
+            const video = searchResult.videos[0]
+            const { title, author, timestamp: duration, views, url, image } = video
+            const vistas = (views || 0).toLocaleString()
+            const canal = author?.name || author || "Desconocido"
+            const thumbBuffer = await getBuffer(image)
+
+            await conn.sendMessage(m.chat, {
+                image: thumbBuffer,
+                caption: `𐔌 ꒱ ***.play1*** 𐔌 ꒱ ✅
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ENCONTRADO\`\` —˙𖦹.🎵꒷
+
+── *📊 INFORMACIÓN* ╏
+📌 ➛ Título: *${title}*
+👤 ➛ Canal: *${canal}*
+⏱️ ➛ Duración: *${duration || '0:00'}*
+👁️ ➛ Vistas: *${vistas}*
+🔗 ➛ Link: ${url}
+
+── *📥 DESCARGA* ╏
+⬇️ ➛ Enviando audio...
+
+━━━━━━━━━━━`
+            }, { quoted: m })
+
+            const dlEndpoint = `${api.url}/dl/ytmp3?url=${encodeURIComponent(url)}&key=${api.key}`
+            const resDl = await fetch(dlEndpoint).then(r => r.json())
+            const dl = resDl?.data?.dl || resDl?.data?.download
+            if (!dl) throw new Error('No se pudo descargar el audio de YT')
+            const audioBuffer = await getBuffer(dl)
+
+            await react(conn, m, '📥')
+            await conn.sendMessage(m.chat, { audio: audioBuffer, mimetype: 'audio/mpeg', fileName: `${title}.mp3`, ptt: false }, { quoted: m })
+        }
+
+        // ===== TIKTOK =====
+        if (command === 'ttmp3' || command === 'tomp3' || command === 'tt') {
+            await m.reply(`𐔌 ꒱ ***.ttmp3*** 𐔌 ꒱ ⏳
+
+.⃟𖥔 ݁. 𖦹˙— \`\`PROCESANDO\`\` —˙𖦹.📱꒷
+
+── *📊 ESTADO* ╏
+🔍 ➛ Analizando link de TikTok...
+📥 ➛ Extrayendo audio...
+⬇️ ➛ Preparando descarga...
+
+━━━━━━━━━━━`)
+
+            const apiUrl = `${api.url}/dl/tiktokmp3?url=${encodeURIComponent(text)}&key=${api.key}`
+            const res = await fetch(apiUrl).then(r => r.json())
+            const data = res?.data || res?.result || res
+            let dl = data?.download || data?.dl || data?.music || data?.play
+            const title = data?.title || data?.desc || 'tiktok'
+            const author = data?.author?.nickname || data?.author || 'Desconocido'
+            const thumb = data?.cover || data?.thumbnail
+            if (!dl) throw new Error('No se pudo descargar. Link mal o privado')
+
+            const audioBuffer = await getBuffer(dl)
+            const caption = `𐔌 ꒱ ***.ttmp3*** 𐔌 ꒱ ✅
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ENCONTRADO\`\` —˙𖦹.📱꒷
+
+── *📊 INFORMACIÓN* ╏
+📌 ➛ Título: *${title}*
+👤 ➛ Autor: *${author}*
+🔗 ➛ Link: ${text}
+
+── *📥 DESCARGA* ╏
+⬇️ ➛ Enviando audio...
+
+━━━━━━━━━━━`
+
+            if (thumb) {
+                const thumbBuffer = await getBuffer(thumb)
+                await conn.sendMessage(m.chat, { image: thumbBuffer, caption }, { quoted: m })
+            } else {
+                await conn.sendMessage(m.chat, { text: caption }, { quoted: m })
+            }
+
+            await react(conn, m, '📥')
+            await conn.sendMessage(m.chat, { audio: audioBuffer, mimetype: 'audio/mpeg', fileName: `${title}.mp3`, ptt: false }, { quoted: m })
+        }
+
+        await react(conn, m, '✅')
+    } catch (e) {
+        await react(conn, m, '❌')
+        let menuErr = `𐔌 ꒱ ***.${command}*** 𐔌 ꒱ ⚠️
+
+.⃟𖥔 ݁. 𖦹˙— \`\`ERROR\`\` —˙𖦹.❌꒷
+
+── *📝 DESCRIPCIÓN* ╏
+❌ ➛ ${e.message}
+
+── *💡 SOLUCIÓN* ╏
+🔧 ➛ Verifica el nombre o link
+🔧 ➛ El video debe ser público
+
+━━━━━━━━━━━`
+        return conn.sendMessage(m.chat, { text: menuErr }, { quoted: m })
     }
-    config.botimg = link
-    fs.writeFileSync('./config.json', JSON.stringify(config, null, 2))
-
-    await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } })
-    await m.reply(`*✅ IMAGEN GLOBAL ACTUALIZADA*\n\n*➤ Nuevo link:* ${link}\n*➤ Servidor:* evogb.win\n*➤ Estado:* Se aplico en todos los comandos`)
-
-} catch (e) {
-    console.log(e)
-    await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } })
-    m.reply(`*Error al subir/guardar la imagen*`)
-}
 }
 
-async function myCloud(content) {
-  const fileType = await fileTypeFromBuffer(content)
-  const ext = fileType? fileType.ext : 'jpg'
-  const mime = fileType? fileType.mime : 'image/jpeg'
-  const formData = new FormData()
-  formData.append("file", new Blob([content], { type: mime }), `${crypto.randomBytes(5).toString("hex")}.${ext}`)
-  const response = await fetch("https://evogb.win/api/upload", { method: "POST", body: formData })
-  if (!response.ok) throw new Error()
-  return await response.json()
-}
-
-handler.help = ['setimg <link> o responde a imagen']
-handler.tags = ['owner']
-handler.command = ['setimg', 'img', 'fotobot']
-handler.owner = true
+handler.help = ['play1 <nombre>', 'ttmp3 <link>']
+handler.tags = ['descargas']
+handler.command = /^(play1|ttmp3|tomp3|tt)$/i
+handler.register = false
 export default handler
