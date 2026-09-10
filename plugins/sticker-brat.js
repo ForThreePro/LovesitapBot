@@ -5,46 +5,49 @@ import path from 'path'
 import { tmpdir } from 'os'
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
+  const react = async (text) => {
+    try { await conn.sendMessage(m.chat, { react: { text: text, key: m.key } }) } catch {}
+  }
+
   let q = m.quoted ? m.quoted : m
   let txt = text || q.text || q.caption || q.body || ''
 
-  if (!txt) return m.reply(`🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧 - 𝗕𝗥𝗔𝗧* 🌸
+  if (!txt) {
+    await react('❌')
+    return m.reply(`𐔌 ꒱ ***BRAT*** 𐔌 ꒱ ⚠️
 
-.⃟𖥔 ݁. 𖦹˙— \`\`ERROR DE USO\`\` —˙𖦹.🍜꒷
+.⃟𖥔 ݁. 𖦹˙— \`\`ERROR DE USO\`\` —˙𖦹.⚠️꒷
 
-*━━━━━━━━━━*
-*⚠️ FALTA TEXTO*
+── *📖 USO* ╏
+➛ Escribe el texto para generar el sticker
+➛ Ejemplo: ${usedPrefix}${command} Hola
 
-*➤* Escribe el texto para generar el *sticker Brat*
-*➤* Ejemplo: *${usedPrefix + command} Hola Lovesitap*
+━━━━━━━━━━━`)
+  }
 
-*━━━━━━━━━━*`)
-
-  await m.react('🖌️')
+  await react('🖌️')
 
   let isAnimated = command.endsWith('anim') || command.endsWith('2')
   let apiUrl = `https://api.evogb.org/tools/brat?text=${encodeURIComponent(txt)}&animated=${isAnimated}&key=sasuke`
 
   let response = await fetch(apiUrl)
   if (!response.ok) {
-    await m.react('❌')
-    return m.reply(`🍰 *𝗟𝗢𝗩𝗘𝗦𝗜𝗧𝗔𝗣 𝗕𝗢𝗧* 🌸
+    await react('❌')
+    return m.reply(`𐔌 ꒱ ***BRAT*** 𐔌 ꒱ ⚠️
 
-.⃟𖥔 ݁. 𖦹˙— \`\`ERROR\`\` —˙𖦹.🍜꒷
+.⃟𖥔 ݁. 𖦹˙— \`\`ERROR\`\` —˙𖦹.❌꒷
 
-*━━━━━━━━━━*
-*❌ ERROR*
+── *📝 AVISO* ╏
+❌ ➛ Error al generar el sticker
+🔄 ➛ Intenta de nuevo
 
-*➤* Error al generar el *sticker*
-*➤* Intenta de nuevo
-
-*━━━━━━━━━━*`)
+━━━━━━━━━━━`)
   }
 
   let inputBuffer = await response.buffer()
   let ext = isAnimated ? 'mp4' : 'png'
-  let tmpInput = path.join(tmpdir(), `lovesitap-${Date.now()}.${ext}`)
-  let tmpOutput = path.join(tmpdir(), `lovesitap-${Date.now()}.webp`)
+  let tmpInput = path.join(tmpdir(), `brat-${Date.now()}.${ext}`)
+  let tmpOutput = path.join(tmpdir(), `brat-${Date.now()}.webp`)
 
   fs.writeFileSync(tmpInput, inputBuffer)
 
@@ -71,14 +74,14 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   await conn.sendMessage(m.chat, {
     sticker: stickerBuffer,
-    packname: 'Lovesitap Bot',
-    author: '🍰🌸🍜'
+    packname: 'Sticker',
+    author: 'Bot'
   }, { quoted: m })
 
   if (fs.existsSync(tmpInput)) fs.unlinkSync(tmpInput)
   if (fs.existsSync(tmpOutput)) fs.unlinkSync(tmpOutput)
 
-  await m.react('✅')
+  await react('✅')
 }
 
 handler.help = ['brat <texto>']
