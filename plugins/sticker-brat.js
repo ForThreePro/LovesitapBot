@@ -19,43 +19,28 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 .⃟𖥔 ݁. 𖦹˙— \`\`ERROR DE USO\`\` —˙𖦹.⚠️꒷
 
 ── *📖 USO* ╏
-➛ Escribe el texto para generar el sticker
-➛ Ejemplo: ${usedPrefix}${command} Hola
+➛ ${usedPrefix}brat Hola
 
 ━━━━━━━━━━━`)
   }
 
   await react('🖌️')
 
-  let isAnimated = command.endsWith('anim') || command.endsWith('2')
-  
-  // CAMBIADO A STELLAR
-  let apiUrl = `https://api.stellarwa.xyz/tools/brat?text=${encodeURIComponent(txt)}&animated=${isAnimated}&key=proyectsV2`
+  let apiUrl = `https://api.stellarwa.xyz/tools/brat?text=${encodeURIComponent(txt)}&key=proyectsV2`
 
   try {
     let response = await fetch(apiUrl)
     if (!response.ok) throw 'Api falló'
 
     let inputBuffer = await response.buffer()
-    let ext = isAnimated ? 'mp4' : 'png'
-    let tmpInput = path.join(tmpdir(), `brat-${Date.now()}.${ext}`)
+    let tmpInput = path.join(tmpdir(), `brat-${Date.now()}.png`)
     let tmpOutput = path.join(tmpdir(), `brat-${Date.now()}.webp`)
 
     fs.writeFileSync(tmpInput, inputBuffer)
 
     await new Promise((resolve, reject) => {
-      let process = ffmpeg(tmpInput)
-      if (isAnimated) {
-        process
-          .fps(15)
-          .videoFilters('scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=0x00000')
-          .outputOptions(['-loop 0', '-preset default', '-an', '-vsync 0'])
-      } else {
-        process
-          .videoFilters('scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=0x00000')
-      }
-
-      process
+      ffmpeg(tmpInput)
+        .videoFilters('scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=0x00000')
         .toFormat('webp')
         .on('end', () => resolve(true))
         .on('error', (err) => reject(err))
@@ -66,8 +51,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     await conn.sendMessage(m.chat, {
       sticker: stickerBuffer,
-      packname: 'Sticker',
-      author: 'Bot'
+      packname: 'Cotti Bots',
+      author: 'Brat'
     }, { quoted: m })
 
     if (fs.existsSync(tmpInput)) fs.unlinkSync(tmpInput)
@@ -84,5 +69,5 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
 handler.help = ['brat <texto>']
 handler.tags = ['sticker']
-handler.command = /^brat2?$/i
+handler.command = /^brat$/i
 export default handler
