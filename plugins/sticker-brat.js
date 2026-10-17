@@ -3,67 +3,45 @@ import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs'
 import path from 'path'
 import { tmpdir } from 'os'
+import moment from 'moment-timezone'
+moment.locale('es')
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  const react = async (emoji) => {
-    try { await conn.sendMessage(m.chat, { react: { text: emoji, key: m.key } }) } catch {}
-  }
+  const fecha = moment.tz('America/Lima').format('DD/MM/YYYY hh:mm:ss a')
+  const react = async (t) => { try { await conn.sendMessage(m.chat, { react: { text: t, key: m.key } }) } catch {} }
+  const head = `‧˚꒰🎃୭ 𓆩 𝗟𝗨𝗫 𝗫 𝗬𝗔𝗟𝗟𝗜𝗖𝗢 𓆪 🦇\n\n꒰ ◞⁺⊹ ．${fecha}\n`
 
   let q = m.quoted ? m.quoted : m
-  let txt = text || q.text || q.caption || q.body || ''
-
+  let txt = text || q.text || q.caption || ''
   if (!txt) {
-    await react('❌')
-    return m.reply(`𐔌 ꒱ ***BRAT*** 𐔌 ꒱ ⚠️
-
-.⃟𖥔 ݁. 𖦹˙— \`\`ERROR DE USO\`\` —˙𖦹.⚠️꒷
-
-── *📖 USO* ╏
-➛ ${usedPrefix}brat Hola
-
-━━━━━━━━━━━`)
+    await react('💀')
+    return m.reply(head + `\n💀 Usa: *${usedPrefix}${command} Tu texto*`, m)
   }
 
-  await react('🖌️')
-
-  let apiUrl = `https://api.stellarwa.xyz/tools/brat?text=${encodeURIComponent(txt)}&key=proyectsV2`
-
   try {
-    let response = await fetch(apiUrl)
-    if (!response.ok) throw 'Api falló'
+    await react('⏳')
+    let apiUrl = `https://api.stellarwa.xyz/tools/brat?text=${encodeURIComponent(txt)}&key=proyectsV2`
+    let res = await fetch(apiUrl)
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    let inputBuffer = await res.buffer()
 
-    let inputBuffer = await response.buffer()
-    let tmpInput = path.join(tmpdir(), `brat-${Date.now()}.png`)
+    let tmpInput = path.join(tmpdir(), `brat-${Date.now()}.gif`)
     let tmpOutput = path.join(tmpdir(), `brat-${Date.now()}.webp`)
-
     fs.writeFileSync(tmpInput, inputBuffer)
 
     await new Promise((resolve, reject) => {
-      ffmpeg(tmpInput)
-        .videoFilters('scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2:color=0x00000')
-        .toFormat('webp')
-        .on('end', () => resolve(true))
-        .on('error', (err) => reject(err))
-        .save(tmpOutput)
+      ffmpeg(tmpInput).frames(1).size('512x512').aspect('1:1').autopad()
+        .outputOptions('-vcodec','libwebp','-lossless','0','-q:v','50','-preset','picture','-an','-vsync','0')
+        .toFormat('webp').on('end',resolve).on('error',reject).save(tmpOutput)
     })
 
     let stickerBuffer = fs.readFileSync(tmpOutput)
-
-    await conn.sendMessage(m.chat, {
-      sticker: stickerBuffer,
-      packname: 'Cotti Bots',
-      author: 'Brat'
-    }, { quoted: m })
-
-    if (fs.existsSync(tmpInput)) fs.unlinkSync(tmpInput)
-    if (fs.existsSync(tmpOutput)) fs.unlinkSync(tmpOutput)
-
-    await react('✅')
-
+    await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
+    fs.unlinkSync(tmpInput); fs.unlinkSync(tmpOutput)
+    await react('🎃')
   } catch (e) {
-    console.log(e)
-    await react('❌')
-    return m.reply(`❌ Error con Stellar. Intenta de nuevo`)
+    await react('💀')
+    await m.reply(head + `\n💀 Error al generar sticker embrujado`, m)
   }
 }
 
